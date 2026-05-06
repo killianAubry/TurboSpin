@@ -4,6 +4,8 @@
 
 Upstream credits: Spinoza is developed by QuState et al.; this fork layers TurboSpin-specific tooling and parsers while keeping the same core simulation model.
 
+**Repository layout on GitHub:** default branch `main` is this simulator workspace. An **egui desktop shell** that consumes this repo as a submodule is maintained on branch **`qsim-ui`** in [github.com/killianAubry/TurboSpin](https://github.com/killianAubry/TurboSpin) (clone with `git clone -b qsim-ui --recurse-submodules …`).
+
 ---
 
 ## Features
