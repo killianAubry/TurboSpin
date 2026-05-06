@@ -77,7 +77,7 @@ pub fn scan_python_qubits(src: &str) -> usize {
 #[allow(dead_code)]
 pub fn detect_qubits(kind: SimulatorKind, src: &str) -> usize {
     match kind {
-        SimulatorKind::Qiskit | SimulatorKind::TurboSpin | SimulatorKind::OldTurboSpin => scan_qasm_qubits(src),
+        SimulatorKind::Qiskit | SimulatorKind::TurboSpin => scan_qasm_qubits(src),
     }
 }
 

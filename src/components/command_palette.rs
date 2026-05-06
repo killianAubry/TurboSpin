@@ -12,16 +12,16 @@ use crate::theme::{color, space};
 use crate::tiling::{auto_split_dir, ViewKind};
 
 const HINTS: &[&str] = &[
-    ":sim <name>          qiskit | turbospin | old-turbospin",
+    ":sim <name>          qiskit | turbospin",
     ":open <view>         circuit | prob | sv | bloch | editor | noise | fid | ent | dm",
     ":compare <name|off>  compare against another simulator (or off)",
     ":save                write circuit.<ext> to workspace folder",
     ":load                read circuit.<ext> from workspace folder",
     ":close               close the focused tile",
     ":run                 run through selected sim(s) — also ⌘R",
-    ":compress <exact|1..8> primary turbospin / old-turbo bit depth",
+    ":compress <exact|1..8> primary turbospin bit depth",
     ":tsmode <bacqs|rpdq> turbospin compression mode",
-    ":compare_compress <exact|1..8>  compare turbo when vs is turbospin or old-turbospin",
+    ":compare_compress <exact|1..8>  compare turbospin bit depth",
     ":compare_tsmode <bacqs|rpdq> compare turbospin mode",
     ":reset               replace the buffer with the current mode's template",
     ":clear               clear the editor",
@@ -131,10 +131,10 @@ fn execute(state: &mut AppState, cmd: &str, focused_rect: egui::Rect) {
             Some(choice) => {
                 state.turbospin_compression = choice;
                 let suffix =
-                    if state.simulator == SimulatorKind::TurboSpin || state.simulator == SimulatorKind::OldTurboSpin {
+                    if state.simulator == SimulatorKind::TurboSpin {
                         "  ⌘R to rerun"
                     } else {
-                        "  (applied when primary is turbospin or old-turbospin)"
+                        "  (applied when primary is turbospin)"
                     };
                 state.ui.flash(
                     format!("primary turbospin bit depth: {}{suffix}", choice.label()),
@@ -151,12 +151,12 @@ fn execute(state: &mut AppState, cmd: &str, focused_rect: egui::Rect) {
                     state.compare_compression = choice;
                     let ok_cmp = matches!(
                         state.compare_simulator,
-                        Some(SimulatorKind::TurboSpin | SimulatorKind::OldTurboSpin)
+                        Some(SimulatorKind::TurboSpin)
                     );
                     let suffix = if ok_cmp {
                         "  ⌘R to rerun"
                     } else {
-                        "  (applied when vs is turbospin or old-turbospin)"
+                        "  (applied when vs is turbospin)"
                     };
                     state.ui.flash(
                         format!("compare turbospin bit depth: {}{suffix}", choice.label()),
@@ -245,7 +245,7 @@ fn execute(state: &mut AppState, cmd: &str, focused_rect: egui::Rect) {
             }
             None => state
                 .ui
-                .flash("usage: :sim <qiskit|turbospin|old-turbospin>", StatusKind::Err),
+                .flash("usage: :sim <qiskit|turbospin>", StatusKind::Err),
         },
         "open" => match parts.next().and_then(parse_view_kind) {
             Some(v) => {
@@ -302,7 +302,7 @@ fn execute(state: &mut AppState, cmd: &str, focused_rect: egui::Rect) {
                 }
             } else {
                 state.ui.flash(
-                    "usage: :compare <qiskit|turbospin|old-turbospin|off>",
+                    "usage: :compare <qiskit|turbospin|off>",
                     StatusKind::Err,
                 );
             }

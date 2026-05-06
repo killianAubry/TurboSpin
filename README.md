@@ -1,28 +1,46 @@
-# Turbospin
+# qsim (desktop UI)
 
 A Rust quantum-circuit playground built on
 [`egui`](https://github.com/emilk/egui)/[`eframe`](https://github.com/emilk/egui/tree/master/crates/eframe).
 
+The native **TurboSpin** simulator (Spinoza + BACQS/RPDQ CLI) lives in its own
+repository at [github.com/killianAubry/TurboSpin](https://github.com/killianAubry/TurboSpin) and is **vendored here as a git submodule**
+under `TurboSpin/`.
+
+**Clone this desktop project with submodules:**
+
+```bash
+git clone -b qsim-ui --recurse-submodules https://github.com/killianAubry/TurboSpin.git qsim
+cd qsim
+```
+
+GitHub default branch `main` on that repository points at the **simulator workspace only**.
+This UI and the rest of the Rust app ship on branch **`qsim-ui`**.
+
+---
+
 The main view is a `micro`-style **text editor** for circuit source. Auxiliary
 views (circuit diagram, probability distribution, state vector, 3D Bloch
-spheres) live in a **tiling window manager** — open them with `⌘T`, move
-focus with `⌘H/J/K/L`, close with `⌘W`. There are no buttons; everything is a
-keybind.
+spheres, noise and more) live in a **tiling window manager** — open them with
+`⌘T`, move focus with `⌘H/J/K/L` (also **Ctrl+Tab** / **Ctrl+Shift+Tab** to cycle
+tiles), close with `⌘W`. **⌘** (Cmd) is substituted with **Ctrl** on non-macOS
+platforms. Use **⌘E** for the command palette and **⌘,** for the configuration
+popup.
 
-Three simulators ship in the box, all delivering the **same statevector
-contract** — every panel besides the editor and circuit visualizer reads off
-`state.simulation.statevector`; probabilities and Bloch vectors are derived
-in pure Rust.
+Two simulators are selectable, both exposing the **same statevector contract** —
+every panel besides the editor and circuit visualizer reads off
+`state.simulation.statevector`; probabilities and derived views are computed in pure Rust.
 
 
 <img width="1470" height="923" alt="image" src="https://github.com/user-attachments/assets/fdcfbe22-a651-421c-86cb-bba0f4519449" />
 
 
-| Mode        | Editor language  | Files          | Runner |
-| ----------- | ---------------- | -------------- | ------ |
-| `openqasm`  | OpenQASM 2.0     | `circuit.qasm` | `python3 scripts/qiskit_run.py qasm <file>` |
-| `qiskit`    | Python (Qiskit)  | `circuit.py`   | `python3 scripts/qiskit_run.py py <file>`   |
-| `turbospin` | OpenQASM 2.0     | `circuit.qasm` | `cargo run --release --quiet -p spinoza --bin spinoza -- --qasm <file> --comp-bit 0|1..8` (cwd `TurboSpin/`) |
+| Mode       | Editor language | Files           | Runner |
+| ---------- | --------------- | --------------- | ------ |
+| `qiskit`   | OpenQASM 2.0    | `circuit.qasm`  | `python3 scripts/qiskit_run.py qasm <file>` (set `QISKIT_PYTHON` to use a venv) |
+| `turbospin`| OpenQASM 2.0    | `circuit.qasm`  | Spinoza CLI in submodule: `--qasm <file> --comp-bit <0–8>` and optional `--compression-mode bacqs\|rpdq` |
+
+See submodule [TurboSpin/README.md](https://github.com/killianAubry/TurboSpin/blob/main/README.md) for CLI flags, compression modes, and OpenQASM coverage.
 
 ## Keybinds
 
@@ -36,28 +54,24 @@ in pure Rust.
 | **Save File** | `⌘S` |
 | **Close Tile** | `⌘W` |
 | **Move Focus** | `⌘H/J/K/L` |
-| **Cycle Focus** | `⌘Tab` / `⌘⇧Tab` |
+| **Cycle Focus** | `⌘Tab` / `⌘⇧Tab` (also **Ctrl+Tab** / **Ctrl+⇧Tab**) |
+| **Configuration** | `⌘,` |
 | **Split View** | `⌘⇧H/J/K/L` |
 
 ## Available Views
 
-*   **Editor**: Main text editor for writing quantum circuits.
-*   **Circuit**: Visual representation of the circuit grid.
-*   **Probability**: Bar chart of basis state probabilities.
-*   **State Vector**: Amplitudes of the final state vector.
-*   **Bloch 3D**: Interactive 3D Bloch spheres for each qubit.
-*   **Benchmarks**: Displays simulation runtime and state vector memory overhead.
+* **Editor**: Syntax-highlighted OpenQASM (and related) source.
+* **Circuit**: Live gate grid from the parser while you type.
+* **Probability**: Basis-state probabilities.
+* **State vector**: Complex amplitudes.
+* **Bloch 3D**: Per-qubit Bloch visualization.
+* **Noise**: Noise model / device tuning with metric-oriented layout.
+* **Fidelity**, **Entanglement**, **Density matrix**: Compare and analyze states (including compare-vs mode).
+* Command palette `:open …` exposes short names (`fid`, `ent`, `dm`, etc.).
 
-Switch with the dropdown in the title bar (or `:sim openqasm | qiskit |
-turbospin`). When the editor is empty or still holds the previous mode's
-starter template, switching auto-loads the new template; otherwise your
-edits are preserved.
+Switch simulator from the configuration popup (**⌘,**), via `:sim qiskit|turbospin`, or hints in the palette. Optionally **compare** against a second simulator in the same overlay; TurboSpin-vs-TurboSpin can use **different bit depth** (`:compare_compress`) and **compression mode** `:compare_tsmode` (`bacqs` / `rpdq`) independently from the primary run.
 
-When `turbospin` is selected, a second title-bar dropdown appears for
-TurboSpin compression: `exact` maps to `--comp-bit 0` (raw Spinoza), while
-`1..8` runs the hybrid BACQS path at that bit depth. The bundled CLI prints
-plain statevector rows only (no compression report); metrics panels treat
-those fields as unavailable unless you use a legacy Spinoza build that emits them.
+When `turbospin` is active, compression is **exact** (`--comp-bit 0`) or **1–8 bits** with an explicit **`bacqs`** vs **`rpdq`** mode whenever compression is on (see submodule README). Successful runs flash **runtime** in the bottom status bar.
 
 The **circuit visualizer** parses the editor source on every keystroke
 (OpenQASM and Python both, best-effort) so the gate grid follows live
@@ -72,11 +86,13 @@ cargo run --release
 python3 -m pip install qiskit
 # (override interpreter via $QISKIT_PYTHON if needed)
 
-# TurboSpin mode shells out to the bundled Spinoza workspace at
-# TurboSpin/Cargo.toml. It's pinned to nightly via its own
-# rust-toolchain.toml; first run will download the toolchain.
+# Initialise the TurboSpin submodule if needed:
+git submodule update --init --recursive TurboSpin
+
+# TurboSpin runs `cargo` against TurboSpin/Cargo.toml (submodule checkout).
+# Pinned toolchain (usually nightly): see TurboSpin/rust-toolchain.toml.
 #   $TURBOSPIN_MANIFEST  override path to TurboSpin/Cargo.toml
-#   $TURBOSPIN_CARGO     override `cargo` invocation (e.g. `rustup run nightly cargo`)
+#   $TURBOSPIN_CARGO     override cargo invocation if required
 ```
 
 > First build downloads `egui`/`eframe`; subsequent runs are incremental.
@@ -155,16 +171,16 @@ state vector so the probability / amplitude / Bloch panels reflect the
 ## Command palette (`⌘E`)
 
 ```
-:sim <name>          openqasm | qiskit | turbospin
-:open <view>         circuit | prob | sv | bloch | editor
-:save                write circuit.<ext> to the workspace folder
-:load                read  circuit.<ext> from the workspace folder
-:close               close the focused tile
-:run                 run the editor source through the selected simulator (also ⌘R)
-:compress <exact|1..8> turbospin compression setting
-:reset               replace the buffer with the current mode's template
-:clear               empty the editor
-:help                hint reminder
+:sim <name>          qiskit | turbospin
+:compare <name|off>  second simulator overlay (or off)
+:open <view>         circuit | prob | sv | bloch | editor | noise | fid | ent | dm | …
+:save / :load        workspace circuit.qasm
+:close               close focused tile
+:run                 run (also ⌘R)
+:compress … / :compare_compress …   turbospin bit depth (primary / compare)
+:tsmode … / :compare_tsmode …       bacqs | rpdq
+:config              configuration popup (also ⌘,)
+:reset / :clear / :help
 ```
 
 ## Layout & architecture

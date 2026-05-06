@@ -2,3 +2,5 @@
 Cargo.lock
 .DS_Store
 *.qasm
+# Legacy local snapshot kept out of this tree (simulator types no longer reference it).
+OldTurboSpin/

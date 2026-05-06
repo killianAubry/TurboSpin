@@ -57,9 +57,7 @@ pub fn show(ctx: &egui::Context, state: &mut AppState) -> bool {
                                 });
                         });
                     }
-                    if state.simulator == SimulatorKind::TurboSpin
-                        || state.simulator == SimulatorKind::OldTurboSpin
-                    {
+                    if state.simulator == SimulatorKind::TurboSpin {
                         ui.add_space(space::SM);
                         ui.horizontal(|ui| {
                             ui.label(RichText::new("compress").color(color::TEXT_MUTED).monospace().size(11.0));
@@ -112,7 +110,7 @@ pub fn show(ctx: &egui::Context, state: &mut AppState) -> bool {
                                     });
                             });
                         }
-                        if cmp == SimulatorKind::TurboSpin || cmp == SimulatorKind::OldTurboSpin {
+                        if cmp == SimulatorKind::TurboSpin {
                             ui.add_space(space::SM);
                             ui.horizontal(|ui| {
                                 ui.label(RichText::new("compress").color(color::TEXT_MUTED).monospace().size(11.0));

@@ -1,0 +1,3 @@
+[submodule "TurboSpin"]
+	path = TurboSpin
+	url = https://github.com/killianAubry/TurboSpin.git

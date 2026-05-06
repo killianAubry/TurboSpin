@@ -15,23 +15,18 @@ pub enum SimulatorKind {
     /// OpenQASM 2 source — runs through the Spinoza-based TurboSpin native
     /// binary (`cargo run -p spinoza --bin spinoza -- --qasm … --comp-bit …`).
     TurboSpin,
-    /// OpenQASM 2 source — runs through the older TurboSpin snapshot
-    /// (`OldTurboSpin/` workspace).
-    OldTurboSpin,
 }
 
 impl SimulatorKind {
     pub const ALL: &'static [SimulatorKind] = &[
         SimulatorKind::Qiskit,
         SimulatorKind::TurboSpin,
-        SimulatorKind::OldTurboSpin,
     ];
 
     pub fn label(self) -> &'static str {
         match self {
             SimulatorKind::Qiskit => "qiskit",
             SimulatorKind::TurboSpin => "turbospin",
-            SimulatorKind::OldTurboSpin => "old-turbospin",
         }
     }
 
@@ -40,7 +35,6 @@ impl SimulatorKind {
         match self {
             SimulatorKind::Qiskit => "qasm",
             SimulatorKind::TurboSpin => "qasm",
-            SimulatorKind::OldTurboSpin => "qasm",
         }
     }
 
@@ -48,14 +42,14 @@ impl SimulatorKind {
     pub fn runner_mode(self) -> &'static str {
         match self {
             SimulatorKind::Qiskit => "qasm",
-            SimulatorKind::TurboSpin | SimulatorKind::OldTurboSpin => "qasm",
+            SimulatorKind::TurboSpin => "qasm",
         }
     }
 
     /// Which highlighter / structural parser handles the editor buffer.
     pub fn source_kind(self) -> SourceKind {
         match self {
-            SimulatorKind::Qiskit | SimulatorKind::TurboSpin | SimulatorKind::OldTurboSpin => SourceKind::OpenQasm,
+            SimulatorKind::Qiskit | SimulatorKind::TurboSpin => SourceKind::OpenQasm,
         }
     }
 
@@ -63,7 +57,6 @@ impl SimulatorKind {
         match s.to_ascii_lowercase().as_str() {
             "qiskit" | "py" | "python" | "q" => Some(Self::Qiskit),
             "turbospin" | "spin" | "spinoza" | "ts" => Some(Self::TurboSpin),
-            "old-turbospin" | "oldts" | "ots" | "oldturbospin" => Some(Self::OldTurboSpin),
             _ => None,
         }
     }
@@ -71,7 +64,7 @@ impl SimulatorKind {
     /// Default template the editor is seeded with for this mode.
     pub fn default_template(self) -> &'static str {
         match self {
-            SimulatorKind::Qiskit | SimulatorKind::TurboSpin | SimulatorKind::OldTurboSpin => OPENQASM_TEMPLATE,
+            SimulatorKind::Qiskit | SimulatorKind::TurboSpin => OPENQASM_TEMPLATE,
         }
     }
 }

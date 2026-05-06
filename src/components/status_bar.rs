@@ -55,9 +55,7 @@ pub fn show_top(ui: &mut egui::Ui, state: &mut AppState) {
                     .size(11.0),
             );
         }
-        if state.simulator == SimulatorKind::TurboSpin
-            || state.simulator == SimulatorKind::OldTurboSpin
-        {
+        if state.simulator == SimulatorKind::TurboSpin {
             ui.add_space(space::XS);
             ui.label(
                 RichText::new(format!("[{}]", state.turbospin_compression.label()))
@@ -172,7 +170,7 @@ pub fn on_simulator_changed(state: &mut AppState, prev: SimulatorKind) {
             s.label(),
             suffix,
             match s {
-                SimulatorKind::TurboSpin | SimulatorKind::OldTurboSpin => {
+                SimulatorKind::TurboSpin => {
                     " · use `:compress …` and `:tsmode …`"
                 }
                 _ => "",

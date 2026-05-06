@@ -311,9 +311,5 @@ fn run_simulator(
             let result = crate::turbospin::run_qasm_source(src, turbospin_compression, turbospin_mode)?;
             Ok((result.simulation, result.compression))
         }
-        SimulatorKind::OldTurboSpin => {
-            let result = crate::old_turbospin::run_qasm_source(src, turbospin_compression)?;
-            Ok((result.simulation, result.compression))
-        }
     }
 }
