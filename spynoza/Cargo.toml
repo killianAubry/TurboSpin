@@ -1,0 +1,26 @@
+[package]
+name = "spynoza"
+version = "0.5.1"
+edition = "2021"
+
+authors = ["Saveliy Yusufov", "Charlee Stefanski", "Constantin Gonciulea"]
+license = "Apache-2.0"
+description = "A High Performance Quantum State Simulator"
+documentation = "https://qustate.github.io/spinoza/"
+repository = "A High Performance Quantum State Simulator implemented in Rust "
+keywords = ["quantum-computing", "simulation", "simulator", "quantum"]
+categories = ["science", "simulation"]
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "spynoza"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.21.2", features = ["extension-module", "abi3-py37"] }
+# use for m1
+#pyo3 = { version = "0.16.5", features = ["extension-module"] }
+# use for cross compiling to windows
+#pyo3 = { version = "0.16.5", features = ["extension-module", "abi3-py37", "generate-import-lib"] }
+spinoza = { path = "../spinoza" }

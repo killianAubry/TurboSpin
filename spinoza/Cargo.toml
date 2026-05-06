@@ -1,0 +1,49 @@
+[package]
+name = "spinoza"
+version = "0.5.1"
+edition = "2021"
+
+authors = ["Saveliy Yusufov", "Charlee Stefanski", "Constantin Gonciulea"]
+license = "Apache-2.0"
+description = "A High Performance Quantum State Simulator"
+documentation = "https://qustate.github.io/spinoza/"
+repository = "A High Performance Quantum State Simulator implemented in Rust "
+keywords = ["quantum-computing", "simulation", "simulator", "quantum"]
+categories = ["science", "simulation"]
+
+[features]
+default = ["double"]
+single = []
+double = []
+qjl = []
+
+[dependencies]
+arrayvec = "0.7.4"
+clap = { version = "4.4.13", features = ["derive"] }
+comfy-table = "7.1.0"
+env_logger = "0.10.1"
+evalexpr = "11.3.0"
+multiversion = "0.7.4"
+qasm = "1.0.0"
+rand = "0.8.5"
+rand_distr = "0.4.3"
+rayon = "1.8.0"
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "benchmark"
+harness = false
+
+[[bin]]
+name = "validate_compression"
+path = "src/bin/validate_compression.rs"
+
+[[bin]]
+name = "validate_bacqs"
+path = "src/bin/validate_bacqs.rs"
+
+[[bin]]
+name = "validate_adaptive"
+path = "src/bin/validate_adaptive.rs"
